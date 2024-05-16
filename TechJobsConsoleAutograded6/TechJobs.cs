@@ -1,25 +1,27 @@
-﻿using System;
-
-namespace TechJobsConsoleAutograded6
+﻿namespace TechJobsConsoleAutograded6
 {
-	public class TechJobs
+    public class TechJobs
 	{
         public void RunProgram()
         {
             // Create two Dictionary vars to hold info for menu and data
 
             // Top-level menu options
-            Dictionary<string, string> actionChoices = new Dictionary<string, string>();
-            actionChoices.Add("search", "Search");
-            actionChoices.Add("list", "List");
+            Dictionary<string, string> actionChoices = new()
+            {
+                { "search", "Search" },
+                { "list", "List" }
+            };
 
             // Column options
-            Dictionary<string, string> columnChoices = new Dictionary<string, string>();
-            columnChoices.Add("core competency", "Skill");
-            columnChoices.Add("employer", "Employer");
-            columnChoices.Add("location", "Location");
-            columnChoices.Add("position type", "Position Type");
-            columnChoices.Add("all", "All");
+            Dictionary<string, string> columnChoices = new()
+            {
+                { "core competency", "Skill" },
+                { "employer", "Employer" },
+                { "location", "Location" },
+                { "position type", "Position Type" },
+                { "all", "All" }
+            };
 
             Console.WriteLine("Welcome to LaunchCode's TechJobs App!");
 
@@ -27,15 +29,15 @@ namespace TechJobsConsoleAutograded6
             while (true)
             {
 
-                string actionChoice = GetUserSelection("View Jobs", actionChoices);
+                string? actionChoice = GetUserSelection("View Jobs", actionChoices);
 
-                if (actionChoice == null)
+                if (actionChoice is null)
                 {
                     break;
                 }
                 else if (actionChoice.Equals("list"))
                 {
-                    string columnChoice = GetUserSelection("List", columnChoices);
+                    string? columnChoice = GetUserSelection("List", columnChoices) ?? "all";
 
                     if (columnChoice.Equals("all"))
                     {
@@ -55,16 +57,17 @@ namespace TechJobsConsoleAutograded6
                 else // choice is "search"
                 {
                     // How does the user want to search (e.g. by skill or employer)
-                    string columnChoice = GetUserSelection("Search", columnChoices);
+                    string? columnChoice = GetUserSelection("Search", columnChoices) ?? "all";
 
                     // What is their search term?
                     Console.WriteLine(Environment.NewLine + "Search term: ");
-                    string searchTerm = Console.ReadLine();
+                    string? searchTerm = Console.ReadLine() ?? "x";
 
                     // Fetch results
                     if (columnChoice.Equals("all"))
                     {
-                        Console.WriteLine("Search all fields not yet implemented.");
+                        List<Dictionary<string, string>> searchResults = JobData.FindByValue(searchTerm);
+                        PrintJobs(searchResults);
                     }
                     else
                     {
@@ -79,7 +82,7 @@ namespace TechJobsConsoleAutograded6
         /*
          * Returns the key of the selected item from the choices Dictionary
          */
-        public string GetUserSelection(string choiceHeader, Dictionary<string, string> choices)
+        public static string? GetUserSelection(string choiceHeader, Dictionary<string, string> choices)
         {
             int choiceIdx;
             bool isValidChoice = false;
@@ -108,7 +111,7 @@ namespace TechJobsConsoleAutograded6
                     Console.WriteLine(j + " - " + choices[choiceKeys[j]]);
                 }
 
-                string input = Console.ReadLine();
+                string? input = Console.ReadLine() ?? "x";
                 if (input.Equals("x") || input.Equals("X"))
                 {
                     return null;
@@ -135,6 +138,10 @@ namespace TechJobsConsoleAutograded6
         // TODO: complete the PrintJobs method.
         public static void PrintJobs(List<Dictionary<string, string>> someJobs)
         {
+            if (someJobs.Count == 0)
+            {
+                Console.WriteLine("No results");
+            }
             foreach (Dictionary<string, string> job in someJobs)
             {
                 Console.WriteLine($"{Environment.NewLine}*****");

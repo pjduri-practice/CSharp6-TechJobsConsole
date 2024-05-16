@@ -1,11 +1,10 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 
 namespace TechJobsConsoleAutograded6
 {
-	public class JobData
+    public class JobData
 	{
-        static List<Dictionary<string, string>> AllJobs = new List<Dictionary<string, string>>();
+        static List<Dictionary<string, string>> AllJobs = new();
         static bool IsDataLoaded = false;
 
         public static List<Dictionary<string, string>> FindAll()
@@ -22,7 +21,7 @@ namespace TechJobsConsoleAutograded6
         {
             LoadData();
 
-            List<string> values = new List<string>();
+            List<string> values = new();
 
             foreach (Dictionary<string, string> job in AllJobs)
             {
@@ -47,7 +46,21 @@ namespace TechJobsConsoleAutograded6
             // load data, if not already loaded
             LoadData();
 
-            return null;
+            List<Dictionary<string, string>> jobs = new();
+
+            foreach (Dictionary<string, string> job in AllJobs)
+            {
+                foreach (KeyValuePair<string, string> entry in job)
+                {
+                    if (entry.Value.ToLower().Contains(value.ToLower()))
+                    {
+                        jobs.Add(job);
+                        break;
+                    }
+                }
+            }
+
+            return jobs;
         }
 
         /**
@@ -62,7 +75,7 @@ namespace TechJobsConsoleAutograded6
             // load data, if not already loaded
             LoadData();
 
-            List<Dictionary<string, string>> jobs = new List<Dictionary<string, string>>();
+            List<Dictionary<string, string>> jobs = new();
 
             foreach (Dictionary<string, string> row in AllJobs)
             {
@@ -70,7 +83,7 @@ namespace TechJobsConsoleAutograded6
 
 
                 //TODO: Make search case-insensitive
-                if (aValue.Contains(value))
+                if (aValue.ToLower().Contains(value.ToLower()))
                 {
                     jobs.Add(row);
                 }
@@ -90,13 +103,13 @@ namespace TechJobsConsoleAutograded6
                 return;
             }
 
-            List<string[]> rows = new List<string[]>();
+            List<string[]> rows = new();
 
             using (StreamReader reader = File.OpenText("job_data.csv"))
             {
                 while (reader.Peek() >= 0)
                 {
-                    string line = reader.ReadLine();
+                    string? line = reader.ReadLine() ?? "";
                     string[] rowArrray = CSVRowToStringArray(line);
                     if (rowArrray.Length > 0)
                     {
@@ -111,7 +124,7 @@ namespace TechJobsConsoleAutograded6
             // Parse each row array into a more friendly Dictionary
             foreach (string[] row in rows)
             {
-                Dictionary<string, string> rowDict = new Dictionary<string, string>();
+                Dictionary<string, string> rowDict = new();
 
                 for (int i = 0; i < headers.Length; i++)
                 {
@@ -129,13 +142,13 @@ namespace TechJobsConsoleAutograded6
         private static string[] CSVRowToStringArray(string row, char fieldSeparator = ',', char stringSeparator = '\"')
         {
             bool isBetweenQuotes = false;
-            StringBuilder valueBuilder = new StringBuilder();
-            List<string> rowValues = new List<string>();
+            StringBuilder valueBuilder = new();
+            List<string> rowValues = new();
 
             // Loop through the row string one char at a time
             foreach (char c in row.ToCharArray())
             {
-                if ((c == fieldSeparator && !isBetweenQuotes))
+                if (c == fieldSeparator && !isBetweenQuotes)
                 {
                     rowValues.Add(valueBuilder.ToString());
                     valueBuilder.Clear();
